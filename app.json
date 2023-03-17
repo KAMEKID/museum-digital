@@ -1,0 +1,15 @@
+{
+  "name": "MuseumDigital",
+  "displayName": "Museum Digital",
+  "plugins": [
+    "./plugins/trust-local-certs.js"
+  ],
+  "expo": {
+    "splash": {
+      "image": "./assets/splash.png"
+    },
+    "android": {
+      "package": "com.package.museum"
+    }
+  }
+}
