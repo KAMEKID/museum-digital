@@ -10,6 +10,11 @@
     },
     "android": {
       "package": "com.package.museum"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c8fe2860-f993-47d3-b5df-b7f7c2e329c4"
+      }
     }
   }
 }

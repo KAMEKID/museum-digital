@@ -37,13 +37,16 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Home from "./components/Home.js";
+import Home from "./components/Home";
 import Profile from "./components/Profile.js";
 import Quiz from "./components/Quiz.js";
+import DetailQuiz from "./components/DetailQuiz.js";
+import hasil from "./components/hasil.js";
 import DetailMuseum from "./components/DetailMuseum.js";
 
 const homeName = "Home";
 const quizName = "Quiz";
+const detailQuizName = "DetailQuiz";
 const profileName = "Profile";
 const detailMuseumName = "DetailMuseum";
 
@@ -61,6 +64,28 @@ const HomeTrackList = () => {
       <Stack.Screen
         name="DetailMuseum"
         component={DetailMuseum}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const QuizTrackList = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Quiz"
+        component={Quiz}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DetailQuiz"
+        component={DetailQuiz}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="hasil"
+        component={hasil}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -112,12 +137,7 @@ export default function App() {
         />
         <Tab.Screen
           name={quizName}
-          component={Quiz}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name={profileName}
-          component={Profile}
+          component={QuizTrackList}
           options={{ headerShown: false }}
         />
       </Tab.Navigator>

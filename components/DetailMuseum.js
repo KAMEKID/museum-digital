@@ -1,55 +1,114 @@
-import * as React from 'react';
-import {View, Text} from 'react-native';
-
-const data = [
-  {
-    id: "1",
-    title: "Museum\nBank Rakyat Indonesia",
-    loc: "Purwokerto, Banyumas",
-    image: "https://www.museumindonesia.com/img_editor/BRI_museum.jpg",
-  },
-  {
-    id: "2",
-    title: "Museum\nPanglima Besar TNI Jenderal Soedirman",
-    loc: "Purwokerto, Banyumas",
-    image:
-      "https://visitjawatengah.jatengprov.go.id/assets/images/540833da-23fd-44db-86c3-d12ca2b6b9d4.jpg",
-  },
-  {
-    id: "3",
-    title: "Museum\nWayang Banyumas",
-    loc: "Sudagaran, Banyumas",
-    image:
-      "https://dmm0a91a1r04e.cloudfront.net/dOVASH2DoexpjHW4z9gKKUm4WG8=/1024x683/https%3A%2F%2Fkompas.id%2Fwp-content%2Fuploads%2F2021%2F05%2F90af9453-6308-476a-a9f9-bdbb3ae99e09_jpg.jpg",
-  },
-  {
-    id: "4",
-    title: "Museum\nProf. Dr. R. Soegarda Poerbakawatja",
-    loc: "Purbalingga, Banyumas",
-    image:
-      "https://visitjawatengah.jatengprov.go.id/assets/images/e759f10a-bb35-42ec-aaf8-59d9a4abaf04.jpg",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Text, View, StyleSheet, Image, TouchableOpacity, Linking } from "react-native";
+import Axios from "axios";
+import { useNavigation } from "@react-navigation/native";
+import { Button } from "react-native-elements";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function DetailMuseum({ route }) {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
 
-  const navigationOptions = ({ navigation }) => {
-    const { params } = navigation.state;
-    const showBottomBar = params ? !params.hideBottomBar : true;
-    return {
-      tabBarVisible: showBottomBar,
-    };
-  };
+  const { itemId } = route.params;
+  const navigation = useNavigation();
 
-  const itemId = route.params.itemId;
+  useEffect(() => {
+    Axios.get(`http://10.0.2.2:5000/api/museums/${itemId}`)
+      .then(({ data }) => {
+        console.log("DetailMuseum -> data", data);
+        setData(data.data);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const itemData = data.find((item) => item.id === itemId);
+  if (isLoading || !data) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
-    <View style={{flex:1, alignItems: 'center', justifyContent:'center'}}>
-      <Text
-        onPress={() => alert('This is the "Detail Screen"')}
-        style={{fontSize:26, fontWeight:'bold'}}>{itemData.title}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            style={{ height: 40, width: 40 }}
+            source={require("../assets/back.png")}
+          />
+        </TouchableOpacity>
+        <Text style={styles.nama}>{data.nama}</Text>
+        <TouchableOpacity onPress={() => Linking.openURL(data.map)}>
+          <Image
+            style={{ height: 35, width: 35 }}
+            source={require("../assets/map.png")}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.detailContainer}>
+        <Image
+          style={[styles.image, styles.shadowProp]}
+          source={{ uri: data.image }}
+        />
+        <Text style={styles.deskripsi}>{data.deskripsi}</Text>
+      </ScrollView>
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  header: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingHorizontal: 15,
+    paddingTop: 60,
+    width: "100%",
+    height: 124,
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  shadowProp: {
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
+    backgroundColor: "white",
+  },
+  image: {
+    width: 345,
+    height: 472,
+    borderRadius: 17,
+    alignSelf: "center",
+  },
+  detailContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+  },
+  nama: {
+    width: 236,
+    fontSize: 20,
+    alignSelf: "center",
+    textAlign: "center",
+  },
+  deskripsi: {
+    marginTop: 15,
+    marginBottom: 10,
+    paddingBottom:20,
+    fontSize: 16,
+    lineHeight: 20,
+    textAlign: "justify",
+  },
+});
